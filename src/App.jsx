@@ -4,6 +4,7 @@ import { TOKENS, LIGHT_TOKENS } from "./data/tokens";
 import { QUOTES } from "./data/quotes";
 import { isoDate, genHistory } from "./utils/dates";
 import { usePersistentState, STORAGE_KEYS } from "./utils/storage";
+import { calculateConsumed, calculateRemaining } from "./utils/nutrition";
 import { ErrorBoundary } from "./components/ErrorBoundary.jsx";
 import { computeTargets, LoginScreen } from "./screens/LoginScreen.jsx";
 import { Dashboard } from "./screens/Dashboard.jsx";
@@ -43,6 +44,7 @@ function FitCoachApp() {
 
   useEffect(() => {
     const checkReminders = () => {
+      if (typeof document !== "undefined" && document.hidden) return; // skip work while backgrounded
       const now = new Date();
       const hh = String(now.getHours()).padStart(2, "0");
       const mm = String(now.getMinutes()).padStart(2, "0");
@@ -79,8 +81,8 @@ function FitCoachApp() {
   const [weightHistory] = useState(genHistory(56, 0.6));
   const quote = useMemo(() => QUOTES[new Date().getDate() % QUOTES.length], []);
 
-  const consumed = meals.reduce((a, m) => ({ cal: a.cal + m.cal, protein: a.protein + m.protein, carbs: a.carbs + m.carbs, fat: a.fat + m.fat }), { cal: 0, protein: 0, carbs: 0, fat: 0 });
-  const remaining = Math.max(targets.calories - consumed.cal, 0);
+  const consumed = calculateConsumed(meals);
+  const remaining = calculateRemaining(consumed.cal, targets.calories);
 
   const todaysWorkoutDone = workoutLogHistory.some(w => w.date === isoDate(0));
   const [workoutProgressPct, setWorkoutProgressPct] = useState(() => (todaysWorkoutDone ? 100 : 0));
