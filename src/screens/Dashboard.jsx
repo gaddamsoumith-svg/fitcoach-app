@@ -1,5 +1,5 @@
 import React from "react";
-import { Flame, Sun, MoonStar, Droplet, Footprints, Moon, ChevronRight } from "lucide-react";
+import { Flame, Sun, MoonStar, Droplet, Footprints, Moon, ChevronRight, Dumbbell } from "lucide-react";
 import { Card, Ring } from "../components/ui.jsx";
 import { EditableStatCard } from "../components/EditableStatCard.jsx";
 
